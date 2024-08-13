@@ -1,0 +1,33 @@
+# a 301 redirect from http to https
+server {
+    listen 80;
+    server_name ${CONTAINER_APP_NAME}.${CONTAINER_APP_ENV_DNS_SUFFIX};
+    return 301 https://$${dummy}host:${EXTERNAL_HTTPS_PORT}$${dummy}request_uri;
+}
+
+# ssl proxy redirect
+# NOTE: this is a template file, ${VARNAMES} are replaced at startup time via entrypoint.sh
+# ${dummy} is needed in order to make sure needed Nginx variables survive envsubst
+server {
+    listen 443 ssl;
+    server_name ${CONTAINER_APP_NAME}.${CONTAINER_APP_ENV_DNS_SUFFIX};
+
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass http://${BACKEND_APP};
+        proxy_set_header Host $${dummy}host;
+        proxy_set_header X-Real-IP $${dummy}remote_addr;
+        proxy_set_header X-Forwarded-For $${dummy}proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $${dummy}scheme;
+
+        proxy_connect_timeout ${BACKEND_TIMEOUT}s;  
+        proxy_send_timeout ${BACKEND_TIMEOUT}s;    
+        proxy_read_timeout ${BACKEND_TIMEOUT}s;
+    }
+}
