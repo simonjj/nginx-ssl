@@ -24,7 +24,7 @@ az containerapp create \
     --environment $ACA_ENV  --image $NGINX_QUICK_START \
     --cpu 2 --memory 4.0Gi \
     --min-replicas 1 --max-replicas 1 \
-    --ingress external --transport tcp --target-port 443 --exposed-port 8444 \
+    --ingress external --transport tcp --target-port 443 --exposed-port 8443 \
     --env-vars BACKEND_APP=$YOUR_BACKEND
 ```
 
