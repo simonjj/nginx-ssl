@@ -17,7 +17,7 @@ A ready made container with a self-signed certificate is available for testing t
 export RG=resource-group
 export ACA_ENV=azure_container_apps_env
 export YOUR_BACKEND=http-waiter-tcp:8080
-export NGINX_QUICK_START=simonj.azurecr.io/nginx-ssl
+export NGINX_QUICK_START=simon.azurecr.io/nginx-ssl
 
 az containerapp create \
     --name nginx-frontend --resource-group $RG \
